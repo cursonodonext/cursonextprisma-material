@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- 1:1 ---
+model User {
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  //el signo quiere decir que su valor puede ser nulo o opcional
+  profile Profile?
+  posts   Post[]   // Relación 1:N con Post
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+}
+
+// --- 1:N ---
+model Post {
+  id       Int       @id @default(autoincrement())
+  title    String
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+  postTags PostTag[] // Relación con tabla intermedia
+}
+
+// --- N:M ---
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  postTags PostTag[] // Relación con tabla intermedia
+}
+
+// La tabla PostTag es una tabla intermedia (también llamada "join table" o "tabla de unión")
+// que implementa la relación Many-to-Many (N:M) entre Posts y Tags.
+model PostTag {
+  postId Int
+  tagId  Int
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  //on cascade: Si se borra un post, se borran sus relaciones en PostTag
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+//  Ventajas de PostTag:
+// 📈 Escalabilidad: Maneja millones de relaciones eficientemente
+// 🔒 Integridad: Previene datos huérfanos con CASCADE
+// ⚡ Flexibilidad: Fácil agregar/quitar relaciones
+// 🎯 Precisión: Clave compuesta previene duplicados
+// 📊 Consultas: Permite consultas complejas de relaciones
+// 🧩 Resumen:
+// PostTag es el "pegamento" que permite que:
+
+// Un post tenga múltiples tags
+// Un tag aparezca en múltiples posts
+// Las relaciones se manejen de forma segura y eficiente

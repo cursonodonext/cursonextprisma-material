@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/app/*": ["./src/app/*"]
+    }
+  }
+}
+
+
+// {
+//   "compilerOptions": {
+//     "paths": {
+//       "@/*": ["./src/*"],
+//       "@/components/*": ["./src/components/*"],
+//       "@/lib/*": ["./src/lib/*"],
+//       "@/app/*": ["./src/app/*"]
+//     }
+//   }
+// }
